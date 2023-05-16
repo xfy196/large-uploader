@@ -65,7 +65,10 @@ const pipeStream = (path, writeStream) => {
   });
 };
 
-const createUploadedList = async (fileHash) => fse.existsSync(path.resolve(UPLOAD_DIR, fileHash)) ? await fse.readdir(path.resolve(UPLOAD_DIR, fileHash)) : []
+const createUploadedList = async (fileHash) =>
+  fse.existsSync(path.resolve(UPLOAD_DIR, fileHash))
+    ? await fse.readdir(path.resolve(UPLOAD_DIR, fileHash))
+    : [];
 
 // 合并切片
 const mergeFileChunk = async (filePath, filename, size) => {
@@ -79,7 +82,7 @@ const mergeFileChunk = async (filePath, filename, size) => {
   chunkPaths.sort((a, b) => a.split("-")[1] - b.split("-")[1]);
   let pipeP = chunkPaths.map((chunkPath, index) =>
     pipeStream(
-      path.resolve(chunkDir, chunkPath, ),
+      path.resolve(chunkDir, chunkPath),
       fse.createWriteStream(filePath, {
         start: index * size,
         end: (index + 1) * size,
@@ -117,7 +120,7 @@ app.post("/vertify", async (req, res) => {
     code: 200,
     data: {
       shouldUpload: true,
-      uploadList: await createUploadedList(fileHash)
+      uploadList: await createUploadedList(fileHash),
     },
     msg: "请求成功",
   });
